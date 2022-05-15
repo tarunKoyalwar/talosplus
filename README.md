@@ -13,7 +13,7 @@
 
 <p align="center">
  <a href="#screenshots">Screenshots</a> •
- <a href="#blogs">Blogs</a> •
+ <a href="#blogs">Blog</a> •
   <a href="#features">Features</a> •
   <a href="#installation-instructions">Installation</a> •
   <a href="#usage">Usage</a> 
@@ -22,7 +22,7 @@
 
 Talosplus is tool to run bash scripts at faster rate by executing commands in parallel using goroutines and with some exceptional features like **Auto Scheduling, Filesystem Abstraction ,Stop/Resume, Buffers,Thread Safe ,Fail Safe, Serial + Parallel Execution, Notification Support** etc provided that script follows given Syntax and is integrated with **MongoDB** which provides lot of flexiblity similar to `bbrf` especially for Bug Hunters, Security Professionals etc.
 
-# Blogs / How To Guides
+# Blog / How To Guides
 
 [Create Your Ultimate Bug Bounty Automation Without Nerdy Bash Skills](https://medium.com/@zealousme/create-your-ultimate-bug-bounty-automation-without-nerdy-bash-skills-part-1-a78c2b109731)
 
@@ -83,6 +83,20 @@ go install github.com/tarunKoyalwar/talosplus/cmd/talosplus@latest
 
 
 Refer to Blog [Part 3](https://medium.com/@zealousme/create-your-ultimate-bug-bounty-automation-without-nerdy-bash-skills-part-3-7ee2b353a781) for step by step instructions in detail.
+
+
+# Limitations
+
+1. Taloplus is just a parser tool and is not aware of bash syntax .
+
+2. Each Command is sandboxed if you are using bash environment variables etc it won't work .It has to be variables
+
+3. For Loops, IF etc Will Work But they can only be in a single line or newline should be escaped using `\`.
+
+
+Saving Outputs to File/Environment Variables Entirely Defeats Purpose of This tool .
+Read Blog or Refer to subenum.sh file before running any script file.
+
 
 # Usage
 
