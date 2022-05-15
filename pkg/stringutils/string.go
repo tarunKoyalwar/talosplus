@@ -9,7 +9,7 @@ func SplitAtSpace(s string) []string {
 
 }
 
-// Split : Similar to Strings.Feilds with Custom Seperator
+// Split : Similar to Strings.Feilds with Custom separator
 func Split(s string, delim rune) []string {
 
 	// Must trim the string first

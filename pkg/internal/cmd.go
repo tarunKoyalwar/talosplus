@@ -24,7 +24,7 @@ func (c *Command) GenUID() {
 	//sort to avoid duplicates
 	sort.Strings(cmdarr)
 
-	//Lets use # as seperator
+	//Lets use # as separator
 	suffix := strings.Join(cmdarr, "#")
 
 	data := []byte(suffix)

@@ -30,7 +30,7 @@ type CMDWrap struct {
 	Comment  string // Human Readable Comment
 	Raw      string //Raw Command to be passed
 	CacheKey string // Unique Hash of Command to Cache
-	UID      string //A Temporary UID of Raw Commmand
+	UID      string //A Temporary UID of Raw Command
 
 	ExportAs       string // Export as variable name
 	ExportFromFile string // IF @outfile is used then export data from here
@@ -179,7 +179,6 @@ func (c *CMDWrap) Execute() error {
 		err := c.cacheIn()
 		if err != nil {
 			ioutils.Cout.PrintWarning("Catched Data Was Not Found %v\n", err.Error())
-			runerror = c.CMD.Run()
 		} else {
 			return nil
 		}
@@ -259,7 +258,7 @@ func (c *CMDWrap) genCacheKey() {
 	//sort to avoid duplicates
 	sort.Strings(tarr)
 
-	//Lets use # as seperator
+	//Lets use # as separator
 	suffix := strings.Join(tarr, "#")
 
 	data := []byte(suffix)

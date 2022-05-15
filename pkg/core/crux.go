@@ -72,7 +72,7 @@ func (s *Scripter) Schedule() {
 
 	ioutils.Cout.Printf("[+] Skipping Following commands\n")
 
-	for k, _ := range needless {
+	for k := range needless {
 		val := s.IndexedCMDs[k].Comment
 		if val == "" {
 			val = s.IndexedCMDs[k].Raw
@@ -348,7 +348,7 @@ func (s *Scripter) Summarize() {
 	notdeclared := []string{}
 	for k, v := range shared.DefaultRegistry.FoundVars {
 		if v {
-			ioutils.Cout.Printf("[+] Found Implicit Decleration of %v", k)
+			ioutils.Cout.Printf("[+] Found Implicit Declaration of %v", k)
 		} else {
 			notdeclared = append(notdeclared, k)
 		}
@@ -362,7 +362,7 @@ func (s *Scripter) Summarize() {
 
 		for k, v := range shared.DefaultRegistry.FoundVars {
 			if !v {
-				fatal += fmt.Sprintf("[-] Missing Decleration for %v\n", k)
+				fatal += fmt.Sprintf("[-] Missing Declaration for %v\n", k)
 			}
 		}
 

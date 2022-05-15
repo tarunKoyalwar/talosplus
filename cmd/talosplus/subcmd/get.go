@@ -97,7 +97,7 @@ var get cobra.Command = cobra.Command{
 func init() {
 	get.Flags().StringVar(&dbname, "db", "", "Database Name to use")
 	get.Flags().StringVarP(&collname, "program", "p", "", "Program/Collection Name")
-	get.Flags().BoolVar(&show, "show", false, "Show All Enviornment Variables present in DB")
+	get.Flags().BoolVar(&show, "show", false, "Show All Environment Variables present in DB")
 	get.Flags().BoolVar(&list, "list", false, "List All Variable Names Present in DB")
 	get.Flags().BoolVar(&local, "local", false, "Show Local Settings [set using `use`]")
 }

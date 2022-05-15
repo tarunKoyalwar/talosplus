@@ -127,7 +127,7 @@ func (p *Pool) Operator() {
 
 		p.JobMutex.Unlock()
 
-		//If interchannel commuication has happend then work is completed
+		//If interchannel commuication has happened then work is completed
 		//add worker back to queue
 		p.workerChannel <- 8
 
