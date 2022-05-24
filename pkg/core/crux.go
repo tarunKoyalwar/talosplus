@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path"
 	"regexp"
 	"strings"
 
@@ -261,9 +262,10 @@ func (s *Scripter) Execute() {
 			//All Checks Passed
 			if !c.IsInvalid {
 
+				ioutils.Cout.PrintInfo("(*) Scheduled... %v", c.Raw)
 				p.AddJobWithId(s.IndexedCMDs[c.UID], c.UID)
 				// fmt.Println(unsafe.Sizeof(c))
-				// ioutils.Cout.PrintInfo("Scheduled... %v:%v", c.Raw, c.UID)
+
 			} else {
 				ioutils.Cout.Printf("[-] %v Will Not be Executed because :\n%v", c.Comment, strings.Join(c.CauseofFailure, "\n"))
 			}
@@ -275,6 +277,10 @@ func (s *Scripter) Execute() {
 	}
 	//All Jobs Assigned
 	p.Done()
+
+	//cleanup
+
+	defer cleanup()
 
 }
 
@@ -417,4 +423,19 @@ func NewScripter() *Scripter {
 	}
 
 	return &z
+}
+
+// cleanup : clean uneeded items from fs
+func cleanup() {
+
+	exportpath := path.Join(shared.DefaultSettings.CacheDIR, shared.DefaultSettings.ProjectExportName)
+
+	_, err := os.Stat(exportpath)
+	if err != nil {
+		return
+	}
+
+	// exports are runtime files {file} created and are not persistent
+	// and is not part of fs cache
+	os.RemoveAll(exportpath)
 }

@@ -67,6 +67,12 @@ Settings Like  Purge, CacheDIR , pname etc can also be set using "get|set"
 		shell.Settings.ProjectExportName = DefaultSettings.ActiveColl + "Exports"
 		shell.Settings.Purge = Purge
 
+		// check env for cachedir
+		cdirenv := os.Getenv("TALOS_CACHEDIR")
+		if cdirenv != "" {
+			shell.Settings.CacheDIR = cdirenv
+		}
+
 		// Configure Notifications if given
 		SetupAlerts()
 
@@ -81,12 +87,12 @@ Settings Like  Purge, CacheDIR , pname etc can also be set using "get|set"
 			}
 		}
 
-		//load data from db
-		shared.SharedVars.AddGlobalVarsFromDB()
-
 		// Create Script Engine
 		s := core.NewScripter()
 		s.ShowOutput = ShowOutput
+
+		//load data from db
+		shared.SharedVars.AddGlobalVarsFromDB()
 
 		if len(blacklist) > 0 {
 			for _, v := range blacklist {
@@ -127,14 +133,15 @@ Settings Like  Purge, CacheDIR , pname etc can also be set using "get|set"
 }
 
 func init() {
+	RunScript.Flags().SortFlags = false
 	RunScript.Flags().StringVar(&dbname, "db", "", "Database Name to use")
 	RunScript.Flags().StringVarP(&collname, "program", "p", "", "Program/Collection Name")
 	RunScript.Flags().StringVarP(&scriptpath, "script", "s", "", "Script Path")
 
 	// Flags Related to talos
-	RunScript.Flags().StringVar(&DiscordId, "id", "", "Discord Webhook ID")
-	RunScript.Flags().StringVar(&DiscordToken, "token", "", "Discord Webhook Token")
-	RunScript.Flags().StringVar(&CachedDir, "cdir", os.TempDir(), "Cache Directory")
+	RunScript.Flags().StringVar(&DiscordId, "id", "", "Discord Webhook ID(ENV: DISCORD_WID)")
+	RunScript.Flags().StringVar(&DiscordToken, "token", "", "Discord Webhook Token(ENV: DISCORD_WTOKEN")
+	RunScript.Flags().StringVar(&CachedDir, "cdir", os.TempDir(), "Cache Directory(ENV: TALOS_CACHEDIR)")
 	RunScript.Flags().IntVarP(&limit, "limit", "t", 4, "Max Number of Concurrent Programs")
 	RunScript.Flags().BoolVar(&ShowOutput, "show", false, "Show Output of Each Command")
 	RunScript.Flags().BoolVar(&Purge, "purge", false, "Purge Cached Data")

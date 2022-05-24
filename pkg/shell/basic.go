@@ -3,6 +3,7 @@ package shell
 import (
 	"bytes"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"path"
@@ -84,7 +85,14 @@ func (s *SimpleCMD) Run() error {
 	c.Stderr = &s.CErrStream
 
 	if s.CPipeIn.Len() > 1 {
-		c.Stdin = &s.CPipeIn
+
+		stdin, err := c.StdinPipe()
+		if err != nil {
+			ioutils.Cout.PrintWarning("[error] %v", err)
+			s.Failed = true
+		}
+		io.WriteString(stdin, s.CPipeIn.String())
+		stdin.Close()
 	}
 
 	err := c.Run()
