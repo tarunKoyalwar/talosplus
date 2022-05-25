@@ -8,6 +8,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/tarunKoyalwar/talosplus/pkg/alerts"
 	"github.com/tarunKoyalwar/talosplus/pkg/core"
+	"github.com/tarunKoyalwar/talosplus/pkg/ioutils"
 	"github.com/tarunKoyalwar/talosplus/pkg/shared"
 	"github.com/tarunKoyalwar/talosplus/pkg/shell"
 )
@@ -16,7 +17,7 @@ import (
 var (
 	limit   = 4 // max number of concurrent programs
 	Purge   = false
-	Verbose = true
+	Verbose = false
 
 	CachedDir    = os.TempDir()
 	DiscordId    = ""
@@ -72,6 +73,9 @@ Settings Like  Purge, CacheDIR , pname etc can also be set using "get|set"
 		if cdirenv != "" {
 			shell.Settings.CacheDIR = cdirenv
 		}
+
+		//debug mode
+		ioutils.Cout.Verbose = Verbose
 
 		// Configure Notifications if given
 		SetupAlerts()

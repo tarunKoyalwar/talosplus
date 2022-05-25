@@ -202,6 +202,11 @@ func (s *Scripter) Execute() {
 			s.Backup = append(s.Backup, b)
 
 		} else {
+			instance := s.IndexedCMDs[resp.Uid]
+			if instance != nil {
+				ioutils.Cout.Printf("[Failed] %v\n", strings.Join(instance.CMD.Cmdsplit, " "))
+			}
+
 			ioutils.Cout.Printf("[-] %v responded with error %v\n", resp.Uid, resp.Err)
 		}
 	}

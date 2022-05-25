@@ -1,18 +1,10 @@
 package gopool
 
 import (
-	"reflect"
 	"sync"
 
 	"github.com/tarunKoyalwar/talosplus/pkg/shell"
 )
-
-const mutexLocked = 1
-
-func MutexLocked(m *sync.Mutex) bool {
-	state := reflect.ValueOf(m).Elem().FieldByName("state")
-	return state.Int()&mutexLocked == mutexLocked
-}
 
 // Pool : Goroutine Pool with Limit
 type Pool struct {
@@ -30,6 +22,7 @@ type Pool struct {
 	logic    *sync.WaitGroup // Handles shared Working of Pool
 	Wg       *sync.WaitGroup // Wait Group For Launched Jobs
 	JobMutex *sync.Mutex
+	JobSent  int
 }
 
 // AddJob
@@ -40,6 +33,7 @@ func (p *Pool) AddJob(t *shell.CMDWrap) {
 	}
 
 	p.JobChannel <- j
+	p.JobSent += 1
 }
 
 // AddJobWithId
@@ -50,6 +44,7 @@ func (p *Pool) AddJobWithId(t *shell.CMDWrap, uid string) {
 	}
 
 	p.JobChannel <- j
+	p.JobSent += 1
 }
 
 // Launcher : (shared)Launches New Jobs assings workers etc
@@ -162,12 +157,13 @@ func (p *Pool) Wait() {
 
 	p.JobMutex.Lock()
 
-	if p.JobCount == 0 {
+	if p.JobCount == 0 && p.JobSent == 0 {
 		p.JobMutex.Unlock()
 		return
 	}
 	p.JobMutex.Unlock()
 	<-p.Completion
+	p.JobSent = 0
 }
 
 func NewPool(size int) *Pool {
