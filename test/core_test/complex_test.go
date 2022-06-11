@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 	"testing"
+	"unsafe"
 
 	"github.com/tarunKoyalwar/talosplus/pkg/core"
 	"github.com/tarunKoyalwar/talosplus/pkg/ioutils"
@@ -144,4 +145,20 @@ func Test_For(t *testing.T) {
 		t.Logf("test of for directive working successful")
 	}
 
+}
+
+func Test_sizes(t *testing.T) {
+	z := shell.CMDWrap{CMD: &shell.SimpleCMD{
+		COutStream: *bytes.NewBufferString("Yup tons of data"),
+	}}
+
+	z2 := &shell.CMDWrap{
+		CMD: &shell.SimpleCMD{
+			COutStream: *bytes.NewBufferString("Yup tons of data"),
+		},
+	}
+
+	t.Logf("Size of struct is %v\n", unsafe.Sizeof(z))
+
+	t.Logf("Size of struct is %v\n", unsafe.Sizeof(z2))
 }

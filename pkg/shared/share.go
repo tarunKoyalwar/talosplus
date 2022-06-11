@@ -115,7 +115,6 @@ func (e *Shared) AddGlobalVarsFromDB() {
 		e.explicit[k] = true
 	}
 
-	ioutils.Cout.PrintInfo("Using %v variables from db\n", len(z))
 }
 
 func NewShared() *Shared {
