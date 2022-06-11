@@ -5,6 +5,7 @@ go 1.18
 require (
 	github.com/disgoorg/disgo v0.10.2
 	github.com/disgoorg/snowflake/v2 v2.0.0
+	github.com/muesli/termenv v0.12.0
 	github.com/spf13/cobra v1.4.0
 	go.mongodb.org/mongo-driver v1.9.1
 	golang.design/x/clipboard v0.6.2
@@ -19,7 +20,6 @@ require (
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/mattn/go-runewidth v0.0.13 // indirect
-	github.com/muesli/termenv v0.12.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/sasha-s/go-csync v0.0.0-20210812194225-61421b77c44b // indirect
