@@ -145,3 +145,48 @@ func Test_For(t *testing.T) {
 	}
 
 }
+
+func Test_SingleLevel(t *testing.T) {
+
+	basicscript := `
+	echo "Testing Level" #as:@slevel{add}
+
+	echo "Level zero" #as:@slevel{add}
+
+	tee /dev/null #from:@slevel #as:@result
+
+	`
+
+	s := core.NewScripter()
+	ioutils.Cout.Verbose = true
+	shell.Settings.Purge = true
+
+	s.Compile(basicscript)
+
+	s.Schedule()
+
+	s.Execute()
+
+	out, er1 := shell.Buffers.Get("@result")
+	if er1 != nil {
+		HandleErrors(er1, t, "Failed to get Exported Value of a cmd")
+	}
+
+	expected := strings.TrimSpace(`
+	Testing Level
+	Level zero
+	`)
+
+	if out != expected {
+		t.Errorf("Failed to met expectations got\n %v", strings.TrimSpace(out))
+	}
+
+}
+
+func HandleErrors(er error, t *testing.T, msg string, a ...any) {
+	if er != nil {
+		t.Logf(msg, a...)
+		t.Errorf(msg, a...)
+		t.Fatal(er)
+	}
+}

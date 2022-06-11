@@ -267,7 +267,7 @@ func (s *Scripter) Execute() {
 			//All Checks Passed
 			if !c.IsInvalid {
 
-				ioutils.Cout.PrintInfo("(*) Scheduled... %v", c.Raw)
+				ioutils.Cout.PrintInfo("(*) Scheduled...\n%v", c.Raw)
 				p.AddJobWithId(s.IndexedCMDs[c.UID], c.UID)
 				// fmt.Println(unsafe.Sizeof(c))
 
