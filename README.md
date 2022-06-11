@@ -69,11 +69,55 @@ These are oversimplified features to name from my blog.
 - Stop /Resume(BETA) 
 - No Compatiblity issues
 
+
+The driving forces behind talosplus are **variables** and **directives** . These directives and variables abstract complex bash syntaxes and solve challanges with little syntax.
+
+## Directives
+
+- Refer Below Table for available directives and their use
+
+| Directive | Syntax | Description | 
+| -- | -- | -- |
+| **#dir** | `#dir:/path/to/directory` | Run Given Command in this directory |
+| **#from** | `#from:@varname` | Get Data from variable(`@varname`) and pass as stdin to cmd |
+| **#as**| `#as:@varname` | Export Output(Stdout Only) of Command to variable (`@varname`) |
+| **#for** | `#for:@arr:@i` | For each line(`@i`) in variable(`@arr`) run new command (Similar to **interlace**) |
+| **#ignore** | `#ignore`  | Ignore Output of this command While showing Output | 
+
+
+## Variables 
+
+Variables are like buffers/env-variable etc starting with `@` and are handled by golang and are thread-safe . All variables exported in script are saved to MongoDB thus it is possible to get output of a specific command in the middle of execution. Talosplus tries to ignore `Everything is a file` Linux Philosophy by abstracting file system and creating and deleting files at runtime based on the need. Below Table Contains Some operations that can be performed on variables.
+
+A Particular operation can be done on variable by supplying operator within `{}`
+
+|Operator| Use Case | Description |
+| -- | -- | -- |
+| **add** | `#as:@gvar{add}` | Append Output of command to `@gvar` variable |
+| **unique** | `#as:@gvar{unique}` | Append output of command to `@gvar` but all values are unique |
+| **file** | `@inscope{file}` | Create a Temp File with `@inscope` variable data and return path of that temp file |
+| **!file** | `@outscope{!file}` | Same as `file` but it can be empty |
+
+
+
+- Special Cases
+
+| Syntax | Example | Description |
+| -- | -- | -- |
+| `@outfile`   |  `subfinder ... -o @outfile`  | Create a temp file(`@outfile`) and use content of file as output instead of stdout |
+| `@tempfile` | - | Create a temp file and return its path  |
+| `@env` | `@env:DISCORD_TOKEN` | Get value of enviournment variable (Can also be done using `$`) |
+
 # Installation Instructions
 
-- Install MongoDB.
+- Configure MongoDB Atlas or Install [MongoDB](https://www.mongodb.com/docs/manual/installation/).
 
-- Download Binary From [Releases](https://github.com/tarunKoyalwar/talosplus/releases) .
+- Install `libx11-dev` (Provides Clipboard Access)
+  
+  - On Debian Based distro ```sudo  apt install libx11-dev```
+
+  - On ArchLinux Based distro ```sudo pacman -S libx11```
+
 
 - Build From Source .
 
@@ -82,7 +126,11 @@ go install github.com/tarunKoyalwar/talosplus/cmd/talosplus@latest
 ~~~
 
 
-Refer to Blog [Part 3](https://medium.com/@zealousme/create-your-ultimate-bug-bounty-automation-without-nerdy-bash-skills-part-3-7ee2b353a781) for step by step instructions in detail.
+Do Star the repo to show  your support.
+Follow me on [github](https://github.com/tarunKoyalwar) / [twitter](https://twitter.com/KoyalwarTarun) to get latest updates on Talosplus.
+
+
+Refer to Blog [Part 3](https://medium.com/@zealousme/create-your-ultimate-bug-bounty-automation-without-nerdy-bash-skills-part-3-7ee2b353a781) for step by step instructions on using `talosplus` command in detail with examples.
 
 
 # Limitations
@@ -100,16 +148,13 @@ Read Blog or Refer to subenum.sh file before running any script file.
 
 # Usage
 
-```sh
-talosplus -h
-```
 
-This will display help for the tool
+Check Below Sample Video which Shows How I use talosplus for Subdomain Enumeration Automation using [subenum.sh](/examples/subenum.sh) 
 
-<p align="center" >
-<img src="static/taloshelp.png" >
-</br>
-</p>
+
+[![asciicast](https://asciinema.org/a/qHeRefcO6WOPrWuNAnpcuICLf.svg)](https://asciinema.org/a/qHeRefcO6WOPrWuNAnpcuICLf)
+
+
 
 
 Talosplus has every feature that would make it easy to write and run bash scripts . 

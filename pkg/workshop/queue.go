@@ -30,12 +30,12 @@ func ExecQueue(q []*shell.CMDWrap, limit int, showout bool) {
 				break
 			}
 
-			ioutils.Cout.Printf("[$] %v Executed Successfully", instance.Comment)
+			ioutils.Cout.Value("[$] %v Executed Successfully", instance.Comment)
 
 			// WIll show output of commands
 			if showout {
 				if !instance.Ignore {
-					ioutils.Cout.Printf("[+] %v\n", instance.Raw)
+					ioutils.Cout.Printf("[+] %v\n", ioutils.Cout.GetColor(ioutils.Green, instance.Raw))
 					if instance.ExportFromFile == "" {
 						ioutils.Cout.Printf("%v", instance.CMD.COutStream.String())
 					} else {

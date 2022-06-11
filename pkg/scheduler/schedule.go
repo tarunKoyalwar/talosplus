@@ -91,18 +91,18 @@ func (s *Scheduler) Run() {
 
 	count := 0
 
-	ioutils.Cout.Printf("[*] Execution Pyramid by levels (top->bottom)\n")
+	ioutils.Cout.Header("[*] Execution Pyramid by levels (top->bottom)\n")
 
 	for _, v := range s.ExecPyramid {
-		ioutils.Cout.Printf("Level %v : ", count)
+		ioutils.Cout.PrintColor(ioutils.Yellow, "Level %v : ", count)
 		for _, b := range v {
-			ioutils.Cout.Printf("%v", b.Comment)
+			ioutils.Cout.Value("%v", b.Comment)
 		}
 		count += 1
 		ioutils.Cout.Printf("")
 	}
 
-	ioutils.Cout.DrawLine(30)
+	ioutils.Cout.Seperator(60)
 
 }
 

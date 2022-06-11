@@ -20,7 +20,6 @@ type Scripter struct {
 	CMDs        []*shell.CMDWrap
 	IndexedCMDs map[string]*shell.CMDWrap
 	ExecPyramid [][]*scheduler.Node
-	Backup      []ioutils.CSave
 	ShowOutput  bool
 	BlackList   map[string]bool
 }
@@ -58,8 +57,6 @@ func (s *Scripter) Schedule() {
 	// remove dependency if variable is already present in data
 	arr := s.filterCompleted()
 
-	// ioutils.Cout.PrintInfo("Resume Kicked In ")
-
 	//these are needless commands that should not run at all
 	needless := map[string]bool{}
 	for _, v := range arr {
@@ -69,17 +66,17 @@ func (s *Scripter) Schedule() {
 		}
 	}
 
-	ioutils.Cout.Printf("[+] Skipping Following commands\n")
+	ioutils.Cout.Header("[+] Skipping Following commands\n")
 
 	for k := range needless {
 		val := s.IndexedCMDs[k].Comment
 		if val == "" {
 			val = s.IndexedCMDs[k].Raw
 		}
-		ioutils.Cout.Printf("%v : %v", k, val)
+		ioutils.Cout.PrintColor(ioutils.Azure, "%v : %v", k, val)
 	}
 
-	ioutils.Cout.DrawLine(30)
+	ioutils.Cout.Seperator(60)
 
 	// autobalance dependcies of blacklisted nodes
 	t.BlackListed = needless
@@ -144,7 +141,7 @@ func (s *Scripter) Execute() {
 	count := 0
 
 	for _, v := range s.ExecPyramid {
-		ioutils.Cout.Printf("[^_^] Executing Level %v Commands\n", count)
+		ioutils.Cout.Header("[^_^] Executing Level %v Commands\n", count)
 		count += 1
 
 		queue := []shell.CMDWrap{}
@@ -169,7 +166,7 @@ func (s *Scripter) Execute() {
 					dissolved, er := c.Disolve()
 
 					if er != nil {
-						ioutils.Cout.Printf("[-] %v Will Not be Executed because :%v\n", c.Comment, er)
+						ioutils.Cout.Printf("[-] %v Will Not be Executed because :%v\n", c.Comment, ioutils.Cout.ErrColor(er).Bold())
 					} else {
 						for _, tinstance := range dissolved {
 
@@ -194,17 +191,17 @@ func (s *Scripter) Execute() {
 			//All Checks Passed
 			if !c.IsInvalid {
 
-				ioutils.Cout.PrintInfo("(*) Scheduled... %v", c.Raw)
+				ioutils.Cout.PrintInfo("(*) Scheduled... %v", strings.Join(c.CMD.Cmdsplit, " "))
 				finalqueue = append(finalqueue, s.IndexedCMDs[c.UID])
 				// fmt.Println(unsafe.Sizeof(c))
 
 			} else {
-				ioutils.Cout.Printf("[-] %v Will Not be Executed because :\n%v", c.Comment, strings.Join(c.CauseofFailure, "\n"))
+				ioutils.Cout.Printf("[-] %v Will Not be Executed because :\n%v", c.Comment, ioutils.Cout.GetColor(ioutils.Azure, strings.Join(c.CauseofFailure, "\n")))
 			}
 		}
 
 		workshop.ExecQueue(finalqueue, shared.DefaultSettings.Limit, s.ShowOutput)
-		ioutils.Cout.DrawLine(32)
+		ioutils.Cout.Seperator(60)
 
 	}
 	//cleanup
@@ -216,47 +213,58 @@ func (s *Scripter) Execute() {
 // Summarize : Summarizes All Script Data
 func (s *Scripter) Summarize() {
 
-	ioutils.Cout.Printf("\n[*] Parsed Settigns\n")
-	ioutils.Cout.Printf("%-16v : %v", "Purge Cache", shared.DefaultSettings.Purge)
-	ioutils.Cout.Printf("%-16v : %v", "Concurrency", shared.DefaultSettings.Limit)
-	ioutils.Cout.Printf("%-16v : %v", "ProjectName", shared.DefaultSettings.ProjectName)
-	ioutils.Cout.Printf("%-16v : %v", "CacheDir", shared.DefaultSettings.CacheDIR)
-	ioutils.Cout.Printf("%-16v : %v", "Verbose", ioutils.Cout.Verbose)
+	if ioutils.Cout.Verbose {
+		//Only in verbose Mode
 
-	ioutils.Cout.DrawLine(30)
+		ioutils.Cout.Header("\n[*] Parsed Settings\n")
+		ioutils.Cout.Value("%-16v : %v", "Purge Cache", shared.DefaultSettings.Purge)
+		ioutils.Cout.Value("%-16v : %v", "Concurrency", shared.DefaultSettings.Limit)
+		ioutils.Cout.Value("%-16v : %v", "ProjectName", shared.DefaultSettings.ProjectName)
+		ioutils.Cout.Value("%-16v : %v", "CacheDir", shared.DefaultSettings.CacheDIR)
+		ioutils.Cout.Value("%-16v : %v", "Verbose", ioutils.Cout.Verbose)
 
-	ioutils.Cout.Printf("\n[*] Used Explicit declared Variables\n")
+		ioutils.Cout.Seperator(60)
+
+	}
+
+	ioutils.Cout.Header("\n[*] Used Explicit declared Variables\n")
 	gvars := shared.SharedVars.GetGlobalVars()
 
 	for k, v := range gvars {
 		tarr := strings.Split(v, "\n")
 		if len(tarr) == 1 {
-			ioutils.Cout.Printf("%-16v : %v", k, tarr[0])
+			ioutils.Cout.Value("%-16v : %v", k, tarr[0])
 		} else {
-			ioutils.Cout.Printf("%-16v : %v", k, tarr[0])
+			ioutils.Cout.Value("%-16v : %v", k, tarr[0])
 			for _, zx := range tarr[1:] {
-				ioutils.Cout.Printf("%-16v : %v", "", zx)
+				ioutils.Cout.Value("%-16v : %v", "", zx)
 			}
 		}
 
 	}
 
-	ioutils.Cout.DrawLine(30)
+	ioutils.Cout.Seperator(60)
 
 	tmp := []string{}
 
-	ioutils.Cout.Printf("\n[*] Generated UIDs For Commands\n")
-	for k, v := range s.IndexedCMDs {
-		identifier := v.Comment
-		if identifier == "" {
-			identifier = v.Raw
+	if ioutils.Cout.Verbose {
+		// Only in Verbose Mode
+
+		ioutils.Cout.Header("\n[*] Generated UIDs For Commands\n")
+		for k, v := range s.IndexedCMDs {
+			identifier := v.Comment
+			if identifier == "" {
+				identifier = v.Raw
+			}
+			ioutils.Cout.Value("%v : %v", k, identifier)
 		}
-		ioutils.Cout.Printf("%v : %v", k, identifier)
+
+		ioutils.Cout.Seperator(60)
 	}
 
-	ioutils.Cout.DrawLine(30)
-
-	ioutils.Cout.Printf("[*] Dependencies Found\n")
+	if ioutils.Cout.Verbose {
+		ioutils.Cout.Header("[*] Dependencies Found\n")
+	}
 
 	for k, v := range shared.DefaultRegistry.Dependents {
 		if len(v) != 0 {
@@ -281,36 +289,53 @@ func (s *Scripter) Summarize() {
 				}
 			}
 
-			ioutils.Cout.Printf("[ %v ] Will be Executed After [%v]\n", strings.Join(requiredby, " , "), strings.Join(providers, " , "))
+			if ioutils.Cout.Verbose {
+				// Print Only in Verbose Mode
+
+				zx := fmt.Sprintf("[ %v ] Will be Executed After [%v]\n", strings.Join(requiredby, " , "), strings.Join(providers, " , "))
+				ioutils.Cout.Printf("%v", ioutils.Cout.GetColor(ioutils.LightGreen, "%v", zx))
+			}
 
 		} else {
 			tmp = append(tmp, k)
 		}
 	}
 
-	ioutils.Cout.DrawLine(30)
+	if ioutils.Cout.Verbose {
+		ioutils.Cout.Seperator(60)
+	}
 
 	if len(tmp) > 0 {
 
-		ioutils.Cout.Printf("[*] Following Values Were Never Used : \n%v \n", strings.Join(tmp, "\n"))
-		ioutils.Cout.DrawLine(30)
+		ioutils.Cout.Header("[*] Following Values Were Never Used :")
+		ioutils.Cout.PrintColor(ioutils.Azure, strings.Join(tmp, "\n"))
+		ioutils.Cout.Seperator(60)
 
 	}
 
-	ioutils.Cout.Printf("[*] Implicit Declarations\n")
+	if ioutils.Cout.Verbose {
+		ioutils.Cout.Header("[*] Implicit Declarations\n")
+	}
+
 	notdeclared := []string{}
 	for k, v := range shared.DefaultRegistry.FoundVars {
 		if v {
-			ioutils.Cout.Printf("[+] Found Implicit Declaration of %v", k)
+
+			if ioutils.Cout.Verbose {
+				ioutils.Cout.Value("[+] Found Implicit Declaration of %v", k)
+			}
+
 		} else {
 			notdeclared = append(notdeclared, k)
 		}
 	}
 
-	ioutils.Cout.DrawLine(30)
+	if ioutils.Cout.Verbose {
+		ioutils.Cout.Seperator(60)
+	}
 
 	if len(notdeclared) > 0 {
-		ioutils.Cout.Printf("\n[*] Following Variables Where Not Found")
+		ioutils.Cout.Header("\n[*] Following Variables Where Not Found")
 		fatal := ""
 
 		for k, v := range shared.DefaultRegistry.FoundVars {
@@ -319,11 +344,11 @@ func (s *Scripter) Summarize() {
 			}
 		}
 
-		ioutils.Cout.Printf(fatal)
+		ioutils.Cout.PrintColor(ioutils.Red, fatal)
 
 		os.Exit(1)
 
-		ioutils.Cout.DrawLine(30)
+		ioutils.Cout.Seperator(60)
 	}
 
 }
@@ -331,15 +356,15 @@ func (s *Scripter) Summarize() {
 // PrintAllCMDs : Pretty Prints All Commands
 func (e *Scripter) PrintAllCMDs() {
 
-	ioutils.Cout.Printf("[*] All Accepted Commands\n")
+	ioutils.Cout.Header("[*] All Accepted Commands\n")
 
 	for _, v := range e.IndexedCMDs {
-		ioutils.Cout.Printf("\n[+] %v", v.Comment)
-		ioutils.Cout.Printf("=> %v", v.Raw)
+		ioutils.Cout.PrintColor(ioutils.Azure, "\n[+] %v", v.Comment)
+		ioutils.Cout.Printf("=> %v", ioutils.Cout.GetColor(ioutils.Green, v.Raw))
 		if v.Alerts != nil {
 			if v.Alerts.NotifyEnabled {
 
-				ioutils.Cout.Printf("[&] %vResult", v.Alerts.NotifyMsg)
+				ioutils.Cout.PrintColor(ioutils.Grey, "[&] %vResult", v.Alerts.NotifyMsg)
 
 			}
 		} else {
@@ -348,17 +373,8 @@ func (e *Scripter) PrintAllCMDs() {
 
 	}
 
-	ioutils.Cout.DrawLine(30)
+	ioutils.Cout.Seperator(60)
 
-}
-
-func (s *Scripter) Export(filename string) {
-	a := ioutils.AllSave{
-		Commands: s.Backup,
-		Exports:  shared.SharedVars.GetGlobalVars(),
-	}
-
-	_ = a
 }
 
 func NewScripter() *Scripter {

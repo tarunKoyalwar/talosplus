@@ -90,6 +90,10 @@ func (c *CMDWrap) Process() {
 			filtered = append(filtered)
 
 		} else if strings.HasPrefix(v, "@") {
+
+			// Sanitize v
+			v = stringutils.ExtractVar(v)
+
 			if v == "@outfile" {
 
 				addr, er1 := shared.DefaultSettings.CreateDirectoryIfNotExist(shared.DefaultSettings.ProjectExportName)

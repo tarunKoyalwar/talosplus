@@ -25,6 +25,7 @@ var (
 	ShowOutput   = false
 	DryRun       = false
 	blacklist    = []string{}
+	Nocolor      = false
 )
 
 var RunScript cobra.Command = cobra.Command{
@@ -70,6 +71,7 @@ Settings Like  Purge, CacheDIR , pname etc can also be set using "get|set"
 
 		// Set Verbosity
 		ioutils.Cout.Verbose = Verbose
+		ioutils.Cout.DisableColor = Nocolor
 
 		// check env for cachedir
 		cdirenv := os.Getenv("TALOS_CACHEDIR")
@@ -150,6 +152,7 @@ func init() {
 	RunScript.Flags().BoolVar(&ShowOutput, "show", false, "Show Output of Each Command")
 	RunScript.Flags().BoolVar(&Purge, "purge", false, "Purge Cached Data")
 	RunScript.Flags().BoolVarP(&Verbose, "verbose", "v", false, "Verbose Output (Includes Warn,Info)")
+	RunScript.Flags().BoolVar(&Nocolor, "no-color", false, "Disable Colored Output")
 	RunScript.Flags().BoolVar(&DryRun, "dryrun", false, "Do Everything Except Running the commands")
 	RunScript.Flags().StringSliceVarP(&blacklist, "blacklist", "b", []string{}, "These variables will not be used from db and cmds will be rerun")
 
