@@ -75,10 +75,10 @@ func (s *SimpleCMD) Run() error {
 
 	if s.DIR != "" {
 
-		c = *exec.Command("sh", "-c", strings.Join(s.Cmdsplit, " "))
+		c = *exec.Command("/bin/sh", "-c", strings.Join(s.Cmdsplit, " "))
 		c.Dir = s.DIR
 	} else {
-		c = *exec.Command("sh", "-c", strings.Join(s.Cmdsplit, " "))
+		c = *exec.Command("/bin/sh", "-c", strings.Join(s.Cmdsplit, " "))
 	}
 
 	c.Stdout = &s.COutStream
@@ -90,9 +90,12 @@ func (s *SimpleCMD) Run() error {
 		if err != nil {
 			ioutils.Cout.PrintWarning("[error] %v", err)
 			s.Failed = true
+			return err
 		}
-		io.WriteString(stdin, s.CPipeIn.String())
-		stdin.Close()
+		func() {
+			defer stdin.Close()
+			io.WriteString(stdin, s.CPipeIn.String())
+		}()
 	}
 
 	err := c.Run()

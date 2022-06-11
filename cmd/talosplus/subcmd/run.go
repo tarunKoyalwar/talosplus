@@ -79,6 +79,9 @@ Settings Like  Purge, CacheDIR , pname etc can also be set using "get|set"
 			shell.Settings.CacheDIR = cdirenv
 		}
 
+		//debug mode
+		ioutils.Cout.Verbose = Verbose
+
 		// Configure Notifications if given
 		SetupAlerts()
 

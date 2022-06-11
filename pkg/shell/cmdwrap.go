@@ -11,7 +11,6 @@ import (
 	"strings"
 
 	"github.com/tarunKoyalwar/talosplus/pkg/internal"
-	"github.com/tarunKoyalwar/talosplus/pkg/ioutils"
 	"github.com/tarunKoyalwar/talosplus/pkg/shared"
 	"github.com/tarunKoyalwar/talosplus/pkg/stringutils"
 )
@@ -182,7 +181,7 @@ func (c *CMDWrap) Execute() error {
 	if !shared.DefaultSettings.Purge {
 		err := c.cacheIn()
 		if err != nil {
-			ioutils.Cout.PrintWarning("Catched Data Was Not Found %v\n", err.Error())
+			// ioutils.Cout.PrintWarning("Catched Data Was Not Found %v\n", err.Error())
 		} else {
 			return nil
 		}
