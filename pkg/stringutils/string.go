@@ -1,6 +1,11 @@
 package stringutils
 
-import "strings"
+import (
+	"regexp"
+	"strings"
+)
+
+var variablereg *regexp.Regexp = regexp.MustCompile(`(([@]{1}[0-9a-zA-Z]+[{][a-z!]+[}])|([@]{1}[0-9a-zA-Z]+))`)
 
 // SplitAtSpace : Similar to strings.Feilds but only considers ' '
 func SplitAtSpace(s string) []string {
@@ -78,4 +83,14 @@ func UniqueElements(s ...string) string {
 	}
 
 	return tmp
+}
+
+// ExtractVar :  Extract var name using regex
+func ExtractVar(raw string) string {
+
+	/*
+		Handle edge cases like printf "@somevar\n"
+	*/
+
+	return variablereg.FindString(raw)
 }

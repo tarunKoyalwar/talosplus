@@ -69,7 +69,8 @@ func (c *Command) Resolve() {
 		} else if strings.Contains(word, "#as") {
 			ProcessAsDirective(word, c.UID)
 		} else if strings.Contains(word, "@") || word == "@outfile" {
-			ProcessVariables(word, c.UID)
+			sanitized := stringutils.ExtractVar(word)
+			ProcessVariables(sanitized, c.UID)
 		}
 	}
 

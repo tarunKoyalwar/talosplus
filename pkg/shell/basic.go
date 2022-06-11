@@ -75,10 +75,10 @@ func (s *SimpleCMD) Run() error {
 
 	if s.DIR != "" {
 
-		c = *exec.Command("sh", "-c", strings.Join(s.Cmdsplit, " "))
+		c = *exec.Command("/bin/sh", "-c", strings.Join(s.Cmdsplit, " "))
 		c.Dir = s.DIR
 	} else {
-		c = *exec.Command("sh", "-c", strings.Join(s.Cmdsplit, " "))
+		c = *exec.Command("/bin/sh", "-c", strings.Join(s.Cmdsplit, " "))
 	}
 
 	c.Stdout = &s.COutStream
