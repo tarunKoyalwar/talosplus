@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/tarunKoyalwar/talosplus/pkg/shared"
+	"github.com/tarunKoyalwar/talosplus/pkg/db"
 )
 
 var varname string
@@ -36,7 +36,7 @@ var set cobra.Command = cobra.Command{
 		var data string
 		manageinput(&data, args)
 
-		errres := shared.SavetoDB(varname, data, true)
+		errres := db.DB.Put(varname, data, true)
 		if errres != nil {
 			return fmt.Errorf("failed to save to db %v", errres)
 		} else {

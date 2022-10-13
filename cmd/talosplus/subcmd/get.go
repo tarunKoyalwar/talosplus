@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	"github.com/tarunKoyalwar/talosplus/pkg/shared"
+	"github.com/tarunKoyalwar/talosplus/pkg/db"
 )
 
 var show bool
@@ -43,7 +43,7 @@ var get cobra.Command = cobra.Command{
 		}
 
 		if show {
-			zx, errx := shared.LoadAllExplicitVars()
+			zx, errx := db.DB.GetAllExplicit()
 			if errx != nil {
 				return errx
 			} else {
@@ -54,7 +54,7 @@ var get cobra.Command = cobra.Command{
 				return nil
 			}
 		} else if list {
-			zx, errx := shared.GetAllVarNames()
+			zx, errx := db.DB.GetAllVarNames()
 			if errx != nil {
 				return errx
 			} else {
@@ -82,7 +82,7 @@ var get cobra.Command = cobra.Command{
 
 		key := strings.TrimSpace(args[0])
 
-		val, err := shared.GetFromDB(key)
+		val, err := db.DB.Get(key)
 
 		if err != nil {
 			return err

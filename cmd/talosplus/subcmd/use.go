@@ -5,7 +5,8 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"github.com/tarunKoyalwar/talosplus/pkg/mongodb"
+	"github.com/tarunKoyalwar/talosplus/pkg/db"
+	"github.com/tarunKoyalwar/talosplus/pkg/db/mongox"
 )
 
 var dbname string
@@ -32,7 +33,7 @@ var use cobra.Command = cobra.Command{
 		if scriptpath != "" {
 			_, err := os.Stat(scriptpath)
 			if err != nil {
-				return fmt.Errorf("Script File Does Not Exist")
+				return fmt.Errorf("script file does not exist")
 			} else {
 				DefaultSettings.ActiveScript = scriptpath
 			}
@@ -69,7 +70,7 @@ func init() {
 func CreateProgramIfNotExists(collname string) error {
 
 	//check if collection exists
-	arr, er := mongodb.MDB.ListDBCollections()
+	arr, er := db.DB.(*mongox.Provider).ListDBCollections()
 	if er != nil {
 		return er
 	}
@@ -83,7 +84,7 @@ func CreateProgramIfNotExists(collname string) error {
 
 	// create new collection /program
 	if !found {
-		err := mongodb.MDB.CreateCollection(collname)
+		err := db.DB.(*mongox.Provider).CreateCollection(collname)
 		return err
 	}
 

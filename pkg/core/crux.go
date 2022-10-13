@@ -6,9 +6,10 @@ import (
 	"path"
 	"strings"
 
+	"github.com/tarunKoyalwar/talosplus/pkg/db"
 	"github.com/tarunKoyalwar/talosplus/pkg/internal"
 	"github.com/tarunKoyalwar/talosplus/pkg/ioutils"
-	"github.com/tarunKoyalwar/talosplus/pkg/mongodb"
+
 	"github.com/tarunKoyalwar/talosplus/pkg/scheduler"
 	"github.com/tarunKoyalwar/talosplus/pkg/shared"
 	"github.com/tarunKoyalwar/talosplus/pkg/shell"
@@ -94,12 +95,12 @@ func (s *Scripter) Schedule() {
 // filtercompleted : Filter Commands that are already completed
 func (s *Scripter) filterCompleted() []string {
 	updatedvars := []string{}
-	if mongodb.MDB == nil {
+	if db.DB == nil {
 		return updatedvars
 	}
 
 	//get all runtime vars
-	z, err := shared.LoadAllRuntimeVars()
+	z, err := db.DB.GetAllImplicit()
 	if err != nil {
 		return updatedvars
 	}
@@ -367,8 +368,6 @@ func (e *Scripter) PrintAllCMDs() {
 				ioutils.Cout.PrintColor(ioutils.Grey, "[&] %vResult", v.Alerts.NotifyMsg)
 
 			}
-		} else {
-			// fmt.Printf("nil for %v\n", v.Raw)
 		}
 
 	}

@@ -2,29 +2,18 @@ package subcmd
 
 import (
 	"bytes"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"strings"
 	"time"
 
-	"github.com/tarunKoyalwar/talosplus/pkg/mongodb"
+	"github.com/tarunKoyalwar/talosplus/pkg/db"
 	"golang.design/x/clipboard"
 )
 
 // PrepareDB : Connects DB and required collection
 func PrepareDB() error {
-	var err error
-	mongodb.MDB, err = mongodb.NewMongoDB(DefaultSettings.ActiveURL)
-	if err != nil {
-		fmt.Printf("Invalid URL or Failed to Connect to MongoDB")
-		return err
-	}
-
-	mongodb.MDB.GetDatabase(DefaultSettings.ActiveDB)
-	mongodb.MDB.GetCollection(DefaultSettings.ActiveColl)
-
-	return nil
+	return db.UseMongoDB(DefaultSettings.ActiveURL, DefaultSettings.ActiveDB, DefaultSettings.ActiveColl)
 }
 
 // HasStdin : Check if Stdin is present
