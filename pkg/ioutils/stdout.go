@@ -2,6 +2,7 @@ package ioutils
 
 import (
 	"fmt"
+	"os"
 	"sync"
 
 	"github.com/muesli/termenv"
@@ -124,6 +125,21 @@ func (p *Print) Fatalf(er error, format string, a ...any) {
 
 	panic(er)
 
+}
+
+func (p *Print) ErrExit(format string, a ...any) {
+	if p.DisableColor {
+		p.m.Lock()
+		fmt.Printf("[Fatal] "+format+"\n", a...)
+		p.m.Unlock()
+	} else {
+		z := fmt.Sprintf("%v %v\n", p.GetColor(Red, "[Fatal]"), p.GetColor(Azure, format, a...))
+		p.m.Lock()
+		fmt.Print(z)
+		p.m.Unlock()
+	}
+
+	os.Exit(1)
 }
 
 func (p *Print) ErrColor(er error) termenv.Style {

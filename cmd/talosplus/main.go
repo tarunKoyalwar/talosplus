@@ -33,9 +33,10 @@ func main() {
 		}
 		ioutils.Cout.PrintInfo("Connected to MongoDB")
 	} else {
+		opts.DBName += ".db"
 		err := db.UseBBoltDB(opts.DatabaseURI, opts.DBName, opts.ContextName)
 		if err != nil {
-			ioutils.Cout.Fatalf(err, "Failed to open Database at %v", opts.DatabaseURI)
+			ioutils.Cout.Fatalf(err, "Failed to open Database at %v %v", opts.DatabaseURI, opts.DBName)
 		}
 	}
 
@@ -61,8 +62,7 @@ func main() {
 				data = string(bin)
 			}
 		} else {
-			fmt.Printf("Nothing to Write . Exiting ...")
-			os.Exit(1)
+			ioutils.Cout.ErrExit("Input Missing . Exiting!!")
 		}
 
 		err := db.DB.Put(opts.WRITE_VAR, data, true)
@@ -136,8 +136,7 @@ func main() {
 		}
 		templateBuff.Write(fbin)
 	} else {
-		fmt.Println("Template Not Given.Exiting...")
-		os.Exit(1)
+		ioutils.Cout.ErrExit("No Templates Found. Exiting!!")
 	}
 
 	t := core.NewScripter()
