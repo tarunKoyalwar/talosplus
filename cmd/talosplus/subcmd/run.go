@@ -112,12 +112,6 @@ Settings Like  Purge, CacheDIR , pname etc can also be set using "get|set"
 		// Compile Given Bash Script
 		s.Compile(scriptdata)
 
-		for _, v := range s.IndexedCMDs {
-			if v.Alerts == nil {
-				fmt.Println("nil after compile")
-			}
-		}
-
 		// Summarize all details of bash script
 		s.Summarize()
 

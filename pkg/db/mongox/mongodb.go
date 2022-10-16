@@ -28,7 +28,7 @@ func New(opts *Options) (*Provider, error) {
 		MongoDB: opts,
 	}
 
-	err := p.Open()
+	err := p.open()
 
 	return p, err
 }
@@ -45,7 +45,7 @@ func (m *Provider) validate() (string, error) {
 }
 
 // Open DB Connection
-func (m *Provider) Open() error {
+func (m *Provider) open() error {
 
 	if err := m.Connect(); err != nil {
 		return err

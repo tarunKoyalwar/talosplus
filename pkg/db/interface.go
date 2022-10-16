@@ -10,8 +10,6 @@ const (
 
 // Provider : Interface for All Providers of Database
 type Provider interface {
-	// Open Connection to Database
-	Open() error
 	// Put variable name and value to db
 	Put(key, value string, isExplicit bool) error
 	// Get value of a variable

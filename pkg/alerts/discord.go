@@ -26,6 +26,10 @@ type DiscordHook struct {
 // SendEmbed : Self Explainatory
 func (g *DiscordHook) SendEmbed(dat string, feilds map[string]string) error {
 
+	if g.Disabled {
+		return nil
+	}
+
 	var embed *discord.EmbedBuilder = discord.NewEmbedBuilder()
 
 	if len(feilds) > 0 {
@@ -90,6 +94,10 @@ func (g *DiscordHook) SendEmbed(dat string, feilds map[string]string) error {
 
 // SendErr : Self Explainatory
 func (g *DiscordHook) SendErr(er error, cmd string) error {
+
+	if g.Disabled {
+		return nil
+	}
 
 	f := discord.NewEmbedBuilder()
 	f.AddField("CMD", cmd, false)

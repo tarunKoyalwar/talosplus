@@ -26,7 +26,7 @@ func New(options *Options) (*Provider, error) {
 		BBoltDB: options,
 	}
 
-	er := p.Open()
+	er := p.open()
 
 	return p, er
 }
@@ -45,7 +45,7 @@ func (p *Provider) validate() (string, error) {
 }
 
 // Open DB Connection
-func (p *Provider) Open() error {
+func (p *Provider) open() error {
 	var er error
 	var dbpath string
 
