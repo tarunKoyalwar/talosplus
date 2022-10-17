@@ -2,20 +2,17 @@ package coretest_test
 
 import (
 	"bytes"
-	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"reflect"
 	"sort"
 	"strconv"
 	"strings"
 	"testing"
-	"unsafe"
 
 	"github.com/tarunKoyalwar/talosplus/pkg/core"
-	"github.com/tarunKoyalwar/talosplus/pkg/ioutils"
 	"github.com/tarunKoyalwar/talosplus/pkg/shared"
-	"github.com/tarunKoyalwar/talosplus/pkg/shell"
 )
 
 // Tests related to parsing a script
@@ -60,13 +57,11 @@ func Test_Script(t *testing.T) {
 		correctly
 	*/
 
-	s := core.NewScripter()
-	ioutils.Cout.Verbose = true
-	shell.Settings.Purge = true
+	s := core.NewVolatileEngine()
 
 	s.Compile(basicscript)
 
-	s.Summarize()
+	s.Evaluate()
 
 	s.Schedule()
 
@@ -99,7 +94,7 @@ func Test_Script(t *testing.T) {
 // Test For Loop
 func Test_For(t *testing.T) {
 
-	ioutils.Cout.Verbose = true
+	s := core.NewVolatileEngine()
 
 	sample := ""
 	for i := 0; i < 10; i++ {
@@ -113,13 +108,9 @@ func Test_For(t *testing.T) {
 	echo @z |  tee /tmp/@z #for:@sequence:@z #as:@forout{add}
 	`
 
-	shell.Settings.Purge = true
-	s := core.NewScripter()
-	s.ShowOutput = true
-
 	s.Compile(bscript)
 
-	s.Summarize()
+	s.Evaluate()
 
 	s.Schedule()
 
@@ -135,7 +126,7 @@ func Test_For(t *testing.T) {
 
 	sort.Strings(arr)
 
-	fmt.Printf("GOt : %v\n", arr)
+	log.Printf("Got : %v\n", arr)
 
 	orig := strings.Fields(sample)
 
@@ -147,18 +138,18 @@ func Test_For(t *testing.T) {
 
 }
 
-func Test_sizes(t *testing.T) {
-	z := shell.CMDWrap{CMD: &shell.SimpleCMD{
-		COutStream: *bytes.NewBufferString("Yup tons of data"),
-	}}
+// func Test_sizes(t *testing.T) {
+// 	z := shell.CMDWrap{CMD: &shell.SimpleCMD{
+// 		COutStream: *bytes.NewBufferString("Yup tons of data"),
+// 	}}
 
-	z2 := &shell.CMDWrap{
-		CMD: &shell.SimpleCMD{
-			COutStream: *bytes.NewBufferString("Yup tons of data"),
-		},
-	}
+// 	z2 := &shell.CMDWrap{
+// 		CMD: &shell.SimpleCMD{
+// 			COutStream: *bytes.NewBufferString("Yup tons of data"),
+// 		},
+// 	}
 
-	t.Logf("Size of struct is %v\n", unsafe.Sizeof(z))
+// 	t.Logf("Size of struct is %v\n", unsafe.Sizeof(z))
 
-	t.Logf("Size of struct is %v\n", unsafe.Sizeof(z2))
-}
+// 	t.Logf("Size of struct is %v\n", unsafe.Sizeof(z2))
+// }

@@ -116,7 +116,6 @@ func (n *Notifications) Notify(dat string) {
 	}
 
 	if alerts.Alert == nil {
-
 		return
 	}
 

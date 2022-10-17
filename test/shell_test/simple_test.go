@@ -6,8 +6,9 @@ import (
 	"testing"
 
 	"github.com/tarunKoyalwar/talosplus/pkg/alerts"
-	"github.com/tarunKoyalwar/talosplus/pkg/ioutils"
+	"github.com/tarunKoyalwar/talosplus/pkg/db"
 	"github.com/tarunKoyalwar/talosplus/pkg/shell"
+	"github.com/tarunKoyalwar/talosplus/pkg/stringutils"
 )
 
 func Test_Echo(t *testing.T) {
@@ -103,16 +104,20 @@ func Test_Alerts(t *testing.T) {
 
 }
 
-func init() {
-	//disable caching
-	shell.Settings.Purge = true
-	ioutils.Cout.Verbose = true
-}
-
 func HandleErrors(er error, t *testing.T, msg string, a ...any) {
 	if er != nil {
 		t.Logf(msg, a...)
 		t.Errorf(msg, a...)
 		t.Fatal(er)
 	}
+}
+
+func TestMain(m *testing.M) {
+	val := os.Getenv("ENABLE_MONGODB_TEST")
+
+	if val == "" {
+		db.UseBBoltDB(os.TempDir(), stringutils.RandomString(6)+".db", "Complex_test")
+	}
+
+	m.Run()
 }

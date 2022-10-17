@@ -29,7 +29,7 @@ type CMDWrap struct {
 	Comment  string // Human Readable Comment
 	Raw      string //Raw Command to be passed
 	CacheKey string // Unique Hash of Command to Cache
-	UID      string //A Temporary UID of Raw Command
+	UID      string // A Temporary UID of Raw Command
 
 	ExportAs       string // Export as variable name
 	ExportFromFile string // IF @outfile is used then export data from here
@@ -247,6 +247,7 @@ func (c *CMDWrap) cacheOut() error {
 
 }
 
+// genCacheKey
 func (c *CMDWrap) genCacheKey() {
 	//copy command
 	tarr := []string{}
@@ -271,6 +272,7 @@ func (c *CMDWrap) genCacheKey() {
 	c.CacheKey = c.CMD.Cmdsplit[0] + "-" + hex.EncodeToString(bin[:])
 }
 
+// addReason : It wraps multiple errors if case of a failure
 func (c *CMDWrap) addReason(format string, a ...any) {
 	c.IsInvalid = true
 
@@ -282,7 +284,7 @@ func (c *CMDWrap) addReason(format string, a ...any) {
 
 }
 
-//Disolve : Disolves Command Into Multiple Commands
+// Disolve : Disolves Command Into Multiple Commands
 func (c *CMDWrap) Disolve() ([]CMDWrap, error) {
 	cmdarr := []CMDWrap{}
 	//get for statement
@@ -338,6 +340,7 @@ func (c *CMDWrap) Disolve() ([]CMDWrap, error) {
 	return cmdarr, nil
 }
 
+// NewCMDWrap
 func NewCMDWrap(newcmd string, comment string) CMDWrap {
 
 	nf, rawcmd := NewNotification(newcmd, comment)

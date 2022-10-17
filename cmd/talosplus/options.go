@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -44,6 +45,7 @@ type Options struct {
 	Config_OPTS
 	DB_OPTS
 
+	Silent      bool // No Banner
 	NoColor     bool //Disable Color Output
 	ShowOutput  bool // Show Ouput of all commands
 	Verbose     bool // Verbose Mode
@@ -55,7 +57,9 @@ func parseInput() Options {
 
 	flagset := goflags.NewFlagSet()
 
-	flagset.SetDescription("Talosplus is a template based Automation Framework that harnesses power of GoLang")
+	description := "Talosplus is a template based Automation Framework that harnesses power of GoLang"
+
+	flagset.SetDescription(fmt.Sprintf("%v\n%v", fmt.Sprintf(banner, Version), description))
 
 	flagset.CreateGroup("templates", "Templates",
 		flagset.BoolVarP(&opts.DryRun, "dry-run", "n", false, "Dry/Test Run the template"),
@@ -64,9 +68,10 @@ func parseInput() Options {
 	)
 
 	flagset.CreateGroup("output", "Output",
+		flagset.BoolVar(&opts.Silent, "silent", false, "Don't Print Banner"),
 		flagset.BoolVarP(&opts.NoColor, "no-color", "nc", false, "Disable Color Output"),
 		flagset.BoolVarP(&opts.ShowOutput, "show", "s", false, "Show Output of All Commands"),
-		flagset.BoolVarP(&opts.Verbose, "verbose", "v", false, "Verbose Mode (Show Scheduled Tasks)"),
+		flagset.BoolVarP(&opts.Verbose, "verbose", "v", false, "Verbose Mode (Show Scheduled Tasks & Warnings)"),
 		flagset.BoolVarP(&opts.VeryVerbose, "very-verbose", "vv", false, "Max Verbosity"),
 	)
 

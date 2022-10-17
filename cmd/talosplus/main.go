@@ -19,9 +19,17 @@ func main() {
 	// Get Input
 	opts := parseInput()
 
-	showBanner()
+	if !opts.Silent {
+		showBanner()
+	}
 
+	// Output
 	ioutils.Cout.DisableColor = opts.NoColor
+	ioutils.Cout.Verbose = opts.Verbose
+	ioutils.Cout.VeryVerbose = opts.VeryVerbose
+	if ioutils.Cout.VeryVerbose {
+		ioutils.Cout.Verbose = true
+	}
 
 	// Configure DB Settings
 
@@ -139,7 +147,7 @@ func main() {
 		ioutils.Cout.ErrExit("No Templates Found. Exiting!!")
 	}
 
-	t := core.NewScripter()
+	t := core.NewEngine()
 	t.ShowOutput = opts.ShowOutput
 
 	// Load Existing Variable Values
@@ -154,7 +162,7 @@ func main() {
 
 	t.Compile(templateBuff.String())
 
-	t.Summarize()
+	t.Evaluate()
 
 	t.PrintAllCMDs()
 

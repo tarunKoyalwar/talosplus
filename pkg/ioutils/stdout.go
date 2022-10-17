@@ -8,15 +8,18 @@ import (
 	"github.com/muesli/termenv"
 )
 
+// Cout : Global Print Instance
 var Cout *Print = NewPrint()
 
+// Print : Concurrency Safe Stdout Printing
 type Print struct {
 	m            *sync.Mutex
-	Verbose      bool
-	DisableColor bool
+	Verbose      bool // Verbose (includes warnings)
+	VeryVerbose  bool // VeryVerbose (includes warnings+info)
+	DisableColor bool // Disable Color Output
 }
 
-// Header : Print as a header
+// Header : Stdout Header Printing Style
 func (p *Print) Header(format string, a ...any) {
 
 	if p.DisableColor {
@@ -32,6 +35,7 @@ func (p *Print) Header(format string, a ...any) {
 
 }
 
+// Value : Stdout Header Value Printing Style
 func (p *Print) Value(format string, a ...any) {
 	if p.DisableColor {
 		p.Printf(format, a...)
@@ -45,6 +49,7 @@ func (p *Print) Value(format string, a ...any) {
 	p.Printf("%v", s)
 }
 
+// Seperator : Dash(-) Seperator of given length
 func (p *Print) Seperator(len int) {
 
 	tmp := ""
@@ -69,6 +74,7 @@ func (p *Print) Seperator(len int) {
 	p.m.Unlock()
 }
 
+// GetColor : Get Colorized text
 func (p *Print) GetColor(z termenv.Color, format string, a ...any) termenv.Style {
 	s := termenv.String(fmt.Sprintf(format, a...))
 	if p.DisableColor {
@@ -80,6 +86,7 @@ func (p *Print) GetColor(z termenv.Color, format string, a ...any) termenv.Style
 	return s
 }
 
+// PrintColor : Print Colored Output
 func (p *Print) PrintColor(z termenv.Color, format string, a ...any) {
 	if p.DisableColor {
 		p.Printf(format, a...)
@@ -93,8 +100,9 @@ func (p *Print) PrintColor(z termenv.Color, format string, a ...any) {
 	p.Printf("%v", s)
 }
 
+// PrintInfo : Print Info
 func (p *Print) PrintInfo(format string, a ...any) {
-	if !p.Verbose {
+	if !p.VeryVerbose {
 		return
 	}
 
@@ -103,7 +111,7 @@ func (p *Print) PrintInfo(format string, a ...any) {
 		fmt.Printf("[Info] "+format+"\n", a...)
 		p.m.Unlock()
 	} else {
-		z := fmt.Sprintf("%v %v\n", p.GetColor(Orange, "[Warn]"), p.GetColor(Azure, format, a...))
+		z := fmt.Sprintf("%v %v\n", p.GetColor(Orange, "[Info]"), p.GetColor(Azure, format, a...))
 		p.m.Lock()
 		fmt.Print(z)
 		p.m.Unlock()
@@ -111,13 +119,14 @@ func (p *Print) PrintInfo(format string, a ...any) {
 
 }
 
+// Fatalf : Output Followed by panic
 func (p *Print) Fatalf(er error, format string, a ...any) {
 	if p.DisableColor {
 		p.m.Lock()
 		fmt.Printf("[Fatal] "+format+"\n", a...)
 		p.m.Unlock()
 	} else {
-		z := fmt.Sprintf("%v %v\n", p.GetColor(Red, "[Fatal]"), p.GetColor(Azure, format, a...))
+		z := fmt.Sprintf("%v %v\n", p.GetColor(Red, "[Fatal]"), fmt.Sprintf(format, a...))
 		p.m.Lock()
 		fmt.Print(z)
 		p.m.Unlock()
@@ -127,13 +136,14 @@ func (p *Print) Fatalf(er error, format string, a ...any) {
 
 }
 
+// ErrExit : Error Followed by exit
 func (p *Print) ErrExit(format string, a ...any) {
 	if p.DisableColor {
 		p.m.Lock()
 		fmt.Printf("[Fatal] "+format+"\n", a...)
 		p.m.Unlock()
 	} else {
-		z := fmt.Sprintf("%v %v\n", p.GetColor(Red, "[Fatal]"), p.GetColor(Azure, format, a...))
+		z := fmt.Sprintf("%v %v\n", p.GetColor(Red, "[Fatal]"), fmt.Sprintf(format, a...))
 		p.m.Lock()
 		fmt.Print(z)
 		p.m.Unlock()
@@ -142,6 +152,7 @@ func (p *Print) ErrExit(format string, a ...any) {
 	os.Exit(1)
 }
 
+// ErrColor : Colorize Error
 func (p *Print) ErrColor(er error) termenv.Style {
 	s := termenv.String(er.Error())
 	if p.DisableColor {
@@ -153,12 +164,14 @@ func (p *Print) ErrColor(er error) termenv.Style {
 	return s
 }
 
+// Printf : Normal Print
 func (p *Print) Printf(format string, a ...any) {
 	p.m.Lock()
 	fmt.Printf(format+"\n", a...)
 	p.m.Unlock()
 }
 
+// PrintWarning : Print Warnings
 func (p *Print) PrintWarning(format string, a ...any) {
 	if !p.Verbose {
 		return
@@ -175,6 +188,7 @@ func (p *Print) PrintWarning(format string, a ...any) {
 	}
 }
 
+// NewPrint : New Print Instance
 func NewPrint() *Print {
 	x := Print{
 		m: &sync.Mutex{},

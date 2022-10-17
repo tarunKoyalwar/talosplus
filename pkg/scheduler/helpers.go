@@ -18,6 +18,7 @@ func FarthestNodethru(x *Node, depth int) (*Node, int) {
 	}
 }
 
+// MaxofArr
 func MaxofArr(z map[*Node]int) (*Node, int) {
 	max := -1
 	var reqnode *Node
