@@ -5,8 +5,8 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/tarunKoyalwar/talosplus/pkg/db"
 	"github.com/tarunKoyalwar/talosplus/pkg/ioutils"
-	"github.com/tarunKoyalwar/talosplus/pkg/mongodb"
 )
 
 var SharedVars *Shared = NewShared()
@@ -71,7 +71,7 @@ func (e *Shared) Set(key string, value string, explicit bool) error {
 	}
 
 	e.variables[key] = value
-	errx := SavetoDB(key, value, explicit)
+	errx := db.DB.Put(key, value, explicit)
 	if errx != nil {
 		ioutils.Cout.PrintWarning("failed to save %v to db\n:%v", key, errx.Error())
 	}
@@ -96,14 +96,15 @@ func (e *Shared) GetGlobalVars() map[string]string {
 
 }
 
+// AddGlobalVarsFromDB to Shared Instance
 func (e *Shared) AddGlobalVarsFromDB() {
-	if mongodb.MDB == nil {
+	if db.DB == nil {
 		return
 	}
 
 	// fmt.Printf("adding vars")
 
-	z, err := LoadAllExplicitVars()
+	z, err := db.DB.GetAllExplicit()
 	if err != nil || len(z) == 0 {
 		ioutils.Cout.PrintWarning("failed to add global vars %v", err)
 		return

@@ -5,12 +5,14 @@ import (
 	"github.com/tarunKoyalwar/talosplus/pkg/shared"
 )
 
+// Scheduler : Schedules commands based on their dependency
 type Scheduler struct {
 	AllNodes    map[string]*Node
-	ExecPyramid [][]*Node
+	ExecPyramid [][]*Node //
 	BlackListed map[string]bool
 }
 
+// AddNode : Add Node to Scheduler
 func (s *Scheduler) AddNode(uid string, comment string) {
 	x := Node{
 		Root:     []*Node{},
@@ -21,6 +23,7 @@ func (s *Scheduler) AddNode(uid string, comment string) {
 	s.AllNodes[uid] = &x
 }
 
+// Run : Run Scheduler and Create ExecPyramid
 func (s *Scheduler) Run() {
 	//remove old assigned data or verify if parent has changed
 
@@ -106,6 +109,7 @@ func (s *Scheduler) Run() {
 
 }
 
+// createExecutionPyramid
 func (s *Scheduler) createExecutionPyramid(CurrNodes []*Node) {
 	cnodes := CurrNodes
 
@@ -179,6 +183,7 @@ func (s *Scheduler) createExecutionPyramid(CurrNodes []*Node) {
 	// return levelarr
 }
 
+// NewScheduler
 func NewScheduler() *Scheduler {
 	return &Scheduler{
 		AllNodes:    map[string]*Node{},
