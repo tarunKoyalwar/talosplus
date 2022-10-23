@@ -1,5 +1,5 @@
 <p align="center" >
-<img src="static/banner.jpeg" width="800" height="396" >
+<img src="static/talosplus.png" width="800" height="396" >
 </br>
 </p>
 
@@ -19,105 +19,59 @@
   <a href="#usage">Usage</a> 
 </p>
 
+# What is Talosplus?
 
-Talosplus is tool to run bash scripts at faster rate by executing commands in parallel using goroutines and with some exceptional features like **Auto Scheduling, Filesystem Abstraction ,Stop/Resume, Buffers,Thread Safe ,Fail Safe, Serial + Parallel Execution, Notification Support** etc provided that script follows given Syntax and is integrated with **MongoDB** which provides lot of flexiblity similar to `bbrf` especially for Bug Hunters, Security Professionals etc.
+Talosplus is a fast and robust **template based Intelligent automation framework** that is designed to create and run automation scripts with almost no knowledge of bash scripting. However having knowledge of bash scripting allows one to create complex automation that is usually not possible with **bash alone**.
 
-# Blog / How To Guides
+Bash was written in 80's in c so it lacks many features that are required to create and run **modern Intelligent automation scripts** . Instead of creating automation in different scripting languages (python etc) or other DSLs. talosplus allows to create intelligent automation scripts by adding annotations (variables & modules) to existing bash scripts.
 
-[Create Your Ultimate Bug Bounty Automation Without Nerdy Bash Skills](https://medium.com/@zealousme/create-your-ultimate-bug-bounty-automation-without-nerdy-bash-skills-part-1-a78c2b109731)
+## How does it work?? 
+---
 
-- [Part 1](https://medium.com/@zealousme/create-your-ultimate-bug-bounty-automation-without-nerdy-bash-skills-part-1-a78c2b109731)
+The concept is similar to how **goroutines** work in Golang , goroutines are managed by go runtime unlike threads . In this case all heavy lifting is done by talosplus at runtime and it manages all issues related with concurrency , data sharing etc and only simplified commands are executed at low level using goroutines.
 
-- [Part 2](https://medium.com/@zealousme/create-your-ultimate-bug-bounty-automation-without-nerdy-bash-skills-part-2-c8cd72018922)
-
-- [Part 3](https://medium.com/@zealousme/create-your-ultimate-bug-bounty-automation-without-nerdy-bash-skills-part-3-7ee2b353a781)
-
-# Why ??
-
-Why use this when bash scripts can be run directly ?? You can think of this like a middleware to run bash scripts . I wanted to create a perfect automation much like **@hakluke** . This project resolves all challenges and issues I faced while writing bash scripts and creating the perfect automation and makes it possible to leverage all important features with comments `Ex: #as:@nmapout, #from:@allsubs etc` . and adds a lot of additional features.
-
-Even If you are a little intriqued, Consider reading [my blog](https://medium.com/@zealousme/create-your-ultimate-bug-bounty-automation-without-nerdy-bash-skills-part-1-a78c2b109731) . Which describes how I overcame challenges I faced , how and when to use these comments ? and effective use of this project and detailed description of all its features like scheduling algo etc.
-
-
-~~~
-If you don't want to use of these comments  or features . Supplying your regular bash script
-Will run every command it can find in parallel.
-~~~
-
-# Screenshots
-
-
-- Sample Bash Script with Syntax at [here](static/script.png)
-
-- Talosplus output at [here](static/cmdout.png)
-
-- Custom Discord Notification at [here](static/notification.png)
 
 
 # Features
 
-These are oversimplified features to name from my blog.
+These are some oversimplified features that are provided by talosplus.
 
-- Auto Scheduling Commands at Runtime
-- Intelligent Automation
+- Parallel Execution of Commands using goroutines
+- Auto Scheduling & Data sharing b/w Commands at Runtime
 - Filesystem Abstraction
+- Caching 
 - Discord Notification Support
 - Thread Safe
-- All Features of BBRF+ Others (MongoDB Backend)
-- Easy Syntax
+- Persistent storage using MongoDB,BBoltDB(Similar to sqlite)
+- Easy & Lenient Syntax
 - Fail Safe && Condition Checks
-- Stop /Resume(BETA) 
-- No Compatiblity issues
+- Stop /Resume (BETA) 
+- No Compatiblity issues with bash
+- Other Features Similar to `bbrf-client`,`interlace`,`rush` etc
 
 
-The driving forces behind talosplus are **variables** and **directives** . These directives and variables abstract complex bash syntaxes and solve challanges with little syntax.
+When bash script is written using **proper annotations** it barely looks like a bash script for example [sub_enum.sh](static/script.png) which is used for **subdomain enumeration** . It looks like list of commands with some annotions and comments but it is probably the **fastest and simplest automation script** available out there.
 
-## Directives
-
-- Refer Below Table for available directives and their use
-
-| Directive | Syntax | Description | 
-| -- | -- | -- |
-| **#dir** | `#dir:/path/to/directory` | Run Given Command in this directory |
-| **#from** | `#from:@varname` | Get Data from variable(`@varname`) and pass as stdin to cmd |
-| **#as**| `#as:@varname` | Export Output(Stdout Only) of Command to variable (`@varname`) |
-| **#for** | `#for:@arr:@i` | For each line(`@i`) in variable(`@arr`) run new command (Similar to **interlace**) |
-| **#ignore** | `#ignore`  | Ignore Output of this command While showing Output | 
+## Flow of Execution
+---
 
 
-## Variables 
+When above **template/script is executed using talosplus** . It parses and validates syntax (i.e annotations) and creates **graph** like datastructure using these annotations and creates a execution pyramid . This execution pyramid contains details like which commands can be run in parllel and details of commands that dependents on this command and lot of other stuff and provides best possible execution flow and handles all edge cases in cases of failures , missing output etc.
 
-Variables are like buffers/env-variable etc starting with `@` and are handled by golang and are thread-safe . All variables exported in script are saved to MongoDB thus it is possible to get output of a specific command in the middle of execution. Talosplus tries to ignore `Everything is a file` Linux Philosophy by abstracting file system and creating and deleting files at runtime based on the need. Below Table Contains Some operations that can be performed on variables.
-
-A Particular operation can be done on variable by supplying operator within `{}`
-
-|Operator| Use Case | Description |
-| -- | -- | -- |
-| **add** | `#as:@gvar{add}` | Append Output of command to `@gvar` variable |
-| **unique** | `#as:@gvar{unique}` | Append output of command to `@gvar` but all values are unique |
-| **file** | `@inscope{file}` | Create a Temp File with `@inscope` variable data and return path of that temp file |
-| **!file** | `@outscope{!file}` | Same as `file` but it can be empty |
+# Screenshots
 
 
+-  [Subdomain Enum Template](static/script.png)
 
-- Special Cases
+-  [Talosplus output](static/cmdout.png)
 
-| Syntax | Example | Description |
-| -- | -- | -- |
-| `@outfile`   |  `subfinder ... -o @outfile`  | Create a temp file(`@outfile`) and use content of file as output instead of stdout |
-| `@tempfile` | - | Create a temp file and return its path  |
-| `@env` | `@env:DISCORD_TOKEN` | Get value of enviournment variable (Can also be done using `$`) |
+-  [Custom Discord Notification](static/notification.png)
+
+-  [Demo Output Video(Old)](https://asciinema.org/a/qHeRefcO6WOPrWuNAnpcuICLf.svg)
 
 # Installation Instructions
 
-- Configure MongoDB Atlas or Install [MongoDB](https://www.mongodb.com/docs/manual/installation/).
-
-- Install `libx11-dev` (Provides Clipboard Access)
-  
-  - On Debian Based distro ```sudo  apt install libx11-dev```
-
-  - On ArchLinux Based distro ```sudo pacman -S libx11```
-
+- Download Binary from Releases
 
 - Build From Source .
 
@@ -130,43 +84,52 @@ Do Star the repo to show  your support.
 Follow me on [github](https://github.com/tarunKoyalwar) / [twitter](https://twitter.com/KoyalwarTarun) to get latest updates on Talosplus.
 
 
-Refer to Blog [Part 3](https://medium.com/@zealousme/create-your-ultimate-bug-bounty-automation-without-nerdy-bash-skills-part-3-7ee2b353a781) for step by step instructions on using `talosplus` command in detail with examples.
-
-
-# Limitations
-
-1. Taloplus is just a parser tool and is not aware of bash syntax .
-
-2. Each Command is sandboxed if you are using bash environment variables etc it won't work .It has to be variables
-
-3. For Loops, IF etc Will Work But they can only be in a single line or newline should be escaped using `\`.
-
-
-Saving Outputs to File/Environment Variables Entirely Defeats Purpose of This tool .
-Read Blog or Refer to subenum.sh file before running any script file.
-
 
 # Usage
 
+```bash
+talosplus -h
+```
 
-Check Below Sample Video which Shows How I use talosplus for Subdomain Enumeration Automation using [subenum.sh](/examples/subenum.sh) 
+Above Command will display help for the tool. Here are all options supported by talosplus
+
+<img src="./static/help.png" >
 
 
-[![asciicast](https://asciinema.org/a/qHeRefcO6WOPrWuNAnpcuICLf.svg)](https://asciinema.org/a/qHeRefcO6WOPrWuNAnpcuICLf)
 
 
+# Resources
+
+[Create Your Ultimate Bug Bounty Automation Without Nerdy Bash Skills](https://medium.com/@zealousme/create-your-ultimate-bug-bounty-automation-without-nerdy-bash-skills-part-1-a78c2b109731)
+
+- [Part 1](https://medium.com/@zealousme/create-your-ultimate-bug-bounty-automation-without-nerdy-bash-skills-part-1-a78c2b109731)
+
+- [Part 2](https://medium.com/@zealousme/create-your-ultimate-bug-bounty-automation-without-nerdy-bash-skills-part-2-c8cd72018922)
+
+- [Part 3 (Outdated)](https://medium.com/@zealousme/create-your-ultimate-bug-bounty-automation-without-nerdy-bash-skills-part-3-7ee2b353a781)
 
 
-Talosplus has every feature that would make it easy to write and run bash scripts . 
+# Syntax / Annotations
 
-## Writing Automation Scripts With Syntax
-To leverage all features of Talosplus like Auto Scheduling etc . It is essential the written bash script follows the syntax . Example of such bash script can be found at [subenum.sh](examples/subenum.sh) . 
+There are only 3 different types of annotations
 
-In detail guide of how to write such scripts and using the syntax can be found at [blog](https://medium.com/@zealousme/create-your-ultimate-bug-bounty-automation-without-nerdy-bash-skills-part-2-c8cd72018922)
+1. Variables (Starts with @)
+2. Modules/directives  (starts with #)
+3. Comments (starts with // and are above a command)
 
-## Usage in Detail
+Talosplus uses comments to represent a command and this comment is linked/embedded with command at runtime these comments are printed instead of commands for simplicity.
 
-In depth details on running any scripts ,configs , interacting with db , storing and retrieving any subdomain(or any variable from bash script) etc. and much more can be found at [blog](https://medium.com/@zealousme/create-your-ultimate-bug-bounty-automation-without-nerdy-bash-skills-part-3-7ee2b353a781)
+Details about using these annotations can be found [here](./SYNTAX.md)
+
+
+# Disclaimer
+
+1. Taloplus is just a parser tool and is not aware of bash syntax at least not in this major release
+
+2. Each Command is sandboxed if you are using bash  variables etc it won't work .It has to be variables
+
+3. Loops & Conditional statements  Will Work But they can only be in a single line or newline should be escaped using `\`. or must be enclosed within `#block{}` module to write it without any restrictions
+
 
 # Support
 
