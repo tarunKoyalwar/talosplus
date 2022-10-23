@@ -1,5 +1,5 @@
 <p align="center" >
-<img src="static/talosplus.png" width="800" height="396" >
+<img src="static/talosplus.png">
 </br>
 </p>
 
@@ -26,7 +26,6 @@ Talosplus is a fast and robust **template based Intelligent automation framework
 Bash was written in 80's in c so it lacks many features that are required to create and run **modern Intelligent automation scripts** . Instead of creating automation in different scripting languages (python etc) or other DSLs. talosplus allows to create intelligent automation scripts by adding annotations (variables & modules) to existing bash scripts.
 
 ## How does it work?? 
----
 
 The concept is similar to how **goroutines** work in Golang , goroutines are managed by go runtime unlike threads . In this case all heavy lifting is done by talosplus at runtime and it manages all issues related with concurrency , data sharing etc and only simplified commands are executed at low level using goroutines.
 
@@ -53,7 +52,6 @@ These are some oversimplified features that are provided by talosplus.
 When bash script is written using **proper annotations** it barely looks like a bash script for example [sub_enum.sh](static/script.png) which is used for **subdomain enumeration** . It looks like list of commands with some annotions and comments but it is probably the **fastest and simplest automation script** available out there.
 
 ## Flow of Execution
----
 
 
 When above **template/script is executed using talosplus** . It parses and validates syntax (i.e annotations) and creates **graph** like datastructure using these annotations and creates a execution pyramid . This execution pyramid contains details like which commands can be run in parllel and details of commands that dependents on this command and lot of other stuff and provides best possible execution flow and handles all edge cases in cases of failures , missing output etc.
