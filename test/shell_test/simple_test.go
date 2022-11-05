@@ -5,7 +5,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/tarunKoyalwar/talosplus/pkg/alerts"
 	"github.com/tarunKoyalwar/talosplus/pkg/db"
 	"github.com/tarunKoyalwar/talosplus/pkg/shell"
 	"github.com/tarunKoyalwar/talosplus/pkg/stringutils"
@@ -85,24 +84,24 @@ func Test_CMD_Export(t *testing.T) {
 	}
 }
 
-func Test_Alerts(t *testing.T) {
-	id := os.Getenv("DISCORD_WID")
-	tok := os.Getenv("DISCORD_WTOKEN")
+// func Test_Alerts(t *testing.T) {
+// 	id := os.Getenv("DISCORD_WID")
+// 	tok := os.Getenv("DISCORD_WTOKEN")
 
-	alerts.Alert = alerts.NewDiscordHook(id, tok)
+// 	alerts.Alert = alerts.NewDiscordHook(id, tok)
 
-	alerts.Alert.Title = "Testing"
+// 	alerts.Alert.Title = "Testing"
 
-	g := shell.NewCMDWrap("echo 'Hello Luci!!' #notify{Test Output}", "")
-	g.Process()
+// 	g := shell.NewCMDWrap("echo 'Hello Luci!!' #notify{Test Output}", "")
+// 	g.Process()
 
-	if err := g.Execute(); err != nil {
-		HandleErrors(err, t, "Failed to Run Command %v\n returned %v", g.Raw, err)
-	}
+// 	if err := g.Execute(); err != nil {
+// 		HandleErrors(err, t, "Failed to Run Command %v\n returned %v", g.Raw, err)
+// 	}
 
-	// g.Export()
+// 	// g.Export()
 
-}
+// }
 
 func HandleErrors(er error, t *testing.T, msg string, a ...any) {
 	if er != nil {
@@ -113,10 +112,12 @@ func HandleErrors(er error, t *testing.T, msg string, a ...any) {
 }
 
 func TestMain(m *testing.M) {
-	val := os.Getenv("ENABLE_MONGODB_TEST")
+	val := os.Getenv("RUN_MONGODB_TEST")
 
 	if val == "" {
 		db.UseBBoltDB(os.TempDir(), stringutils.RandomString(6)+".db", "Complex_test")
+	} else {
+		db.UseMongoDB("", stringutils.RandomString(6)+".db", "Complex_test")
 	}
 
 	m.Run()

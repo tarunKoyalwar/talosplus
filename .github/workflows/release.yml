@@ -1,0 +1,42 @@
+name: Release nestle binary
+
+on:
+  push:
+    # Only against tags
+    tags:
+      - '*'
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  goreleaser:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Setup Git repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+        
+
+      - 
+        name: Force Fetch Tags
+        run: git fetch --force --tags
+
+      - 
+        name: Setup Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.19
+
+      - 
+        name: Setup Goreleaser
+        uses: goreleaser/goreleaser-action@v3
+        with:
+          args: "release --rm-dist"
+          version: latest
+
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
