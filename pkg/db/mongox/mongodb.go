@@ -63,6 +63,8 @@ func (m *Provider) open() error {
 
 	if m.MongoDB.CollectionName == "" {
 		return fmt.Errorf("mongoDB collection name missing")
+	} else {
+		m.GetCollection(m.MongoDB.CollectionName)
 	}
 
 	return nil
