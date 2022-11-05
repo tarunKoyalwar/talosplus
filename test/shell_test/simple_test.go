@@ -113,10 +113,12 @@ func HandleErrors(er error, t *testing.T, msg string, a ...any) {
 }
 
 func TestMain(m *testing.M) {
-	val := os.Getenv("ENABLE_MONGODB_TEST")
+	val := os.Getenv("RUN_MONGODB_TEST")
 
 	if val == "" {
 		db.UseBBoltDB(os.TempDir(), stringutils.RandomString(6)+".db", "Complex_test")
+	} else {
+		db.UseMongoDB("", stringutils.RandomString(6)+".db", "Complex_test")
 	}
 
 	m.Run()
